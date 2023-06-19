@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    triggers {
+        pollSCM('*/1 * * * *') //makes it build every minute
+    }
+
+    stages {
+        stage('Cleanup') {
+            steps {
+                cleanWs() //cleans up the last run of the script because it cannot clone a git repository twice
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                sh 'git clone https://github.com/EitanAizenberg/flaskproject.git'
+            }
+        }
+
+        stage('Build & Zip') {
+            steps {
+                sh 'tar -cvzf Crypto-Site.tar.gz flaskproject' //zips the repository's content
+            }
+        }
+
+        stage('Upload to S3') {
+            steps {
+             sh 'aws s3 cp Crypto-Site.tar.gz https://s3.console.aws.amazon.com/s3/buckets/sela-devops-course?region=eu-central-1&tab=objects' //allows it to access the AWS account and copies the zip file to the s3 bucket
+            }
+        }
+    }
+}
