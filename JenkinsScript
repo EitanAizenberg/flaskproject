@@ -7,25 +7,35 @@ pipeline {
     stages {
         stage('Cleanup') {
             steps {
+                echo Cleaning up!
                 cleanWs() //cleans up the last run of the script because it cannot clone a git repository twice
             }
         }
 
         stage('Clone Repository') {
             steps {
+                echo cloning repository
                 sh 'git clone https://github.com/EitanAizenberg/flaskproject.git'
             }
         }
 
         stage('Build & Zip') {
             steps {
+                echo zipping it
                 sh 'tar -cvzf Crypto-Site.tar.gz flaskproject' //zips the repository's content
             }
         }
 
         stage('Upload to S3') {
             steps {
-             sh 'aws s3 cp Crypto-Site.tar.gz https://s3.console.aws.amazon.com/s3/buckets/sela-devops-course?region=eu-central-1&tab=objects' //allows it to access the AWS account and copies the zip file to the s3 bucket
+                echo uploading to S3
+                sh 'aws s3 cp Crypto-Site.tar.gz https://s3.console.aws.amazon.com/s3/buckets/jenkins-project1?region=eu-central-1&tab=objects' //allows it to access the AWS account and copies the zip file to the s3 bucket
+            }
+        }
+
+        stage ('clone s3 bucket into EC2 instance') {
+            steps {
+             sh 'aws s3 sync https://s3.console.aws.amazon.com/s3/buckets/jenkins-project1?region=eu-central-1&tab=objects something3/home/ec2-user'
             }
         }
     }
