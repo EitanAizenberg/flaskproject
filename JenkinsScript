@@ -31,8 +31,8 @@ pipeline {
                 sh 'echo uploading to S3'
                 withAWS(region: 'eu-central-1', credentials: 'AWS') {
                     sh 'aws s3 cp Crypto-Site.tar.gz https://s3.console.aws.amazon.com/s3/buckets/jenkins-project1?region=eu-central-1&tab=objects' //allows it to access the AWS account and copies the zip file to the s3 bucket
+                    sh 'aws s3 ls'
                 }
-                sh 'aws s3 ls'
             }
         }
 
