@@ -36,11 +36,12 @@ pipeline {
             }
         }
 
-       // stage ('connecting to EC2 instance') {
-    //        steps {
-     //           sshagent(['MIIEogIBAAKCAQEAgxpZgCVtFeK3bfj3whFTObtKFLCWETnm3AZfIB/kouYfn651qTrVSJoEdceiWM3dUPX0VG1m6j4/iFbkTVrXsAK7nicw50/S0ZlySvSarB8B/S950zD5CgySrIyAXzvZkvg6gc1wzDcKwrGdPVf0MEFc+mWAmtc0+G0vDSx1TC8uGhsB+1avnPAGD+VvZ/nfqnX04m7bHNjIR3RMKL1LBVCYaATHOuDHI+F9cC0L70qEebRSCkjavpO0EdrjsqBVkGpW5Nhx+TJE525skm4r/yJeLYkb17G8tDHkQcpxiEsRCC7N+/tiROuGZKaGH2SGgg21cuHdhhaclCNhjYZ3OQIDAQABAoIBAHq3kmlaHwbqZeqhrkBQ+UdD4a8GMCJFwavYpvgqAljc8WMF6YsT0AsaZ+xbhsJ7SJt87kyM71V6GPwk4aTq0JQnqrj6VFNgq6SYbpxs488TY0g8RVuDLsnSRQUQqyT5n8prYlCYHep55y+hE98U0jTNKhwUINPeXzErtM090LsVL587tjadW9XPfrzEFmwvR2KkesCba9Pk8irCJgtFvqC7o1sTOacu3dacLWKZ/vn7shWO8nfJqEOVG8Ez/VimEFhJNc2S7kQsPm8G8PJN3KQrVNNQiJxXYRmmImTq6KQJBg5RGls2T8lrNDxQHz98URhc4MOLyx6dlm73iCnIAECgYEA4GJusd5SuzwiMoG69hG0FjPHBPiF3j0y3y6omSDx3WvIODGjZqMWPiNqebh9WlkKLUEYn4oSHV5EPchhKDwrvOGxb1zyRS5wafxydAQ5n0l8URw9gmMAZh6NwdSPrNcFoN42+Rcaa9GKEqh2uPsFpiSRrbZy4O6STiH4t37rezkCgYEAlZM+PLey/Z9X/iuhSi6JKax3wy8NllqLnHPLpe4eZs/N9DgN7iZRNbGH3pbgc0KUpKgJ6901NuepWVhQaP8zvDESea89EWPKyiT09lChh5kxDc5pCOiYSHFcDW1EKUBLFwhub/bbACyRPRb23ItGFTVBvZPfQVID2aXbsVhm3AECgYAKjxc+b4PdI7tIPSqbIcIjuVQIO9mw15hpQDzW1+IJ1WSaoFtcHRiS2//Kso/TjJUaBBIwj8LCdwknDyLjTdGRFd3Pq8QK1WCc3DBWnUxI3qBnALk0RYxjQdTR5jrMm2G8bDiSCDBKGpYwwpSzp7xgUSA52HgXdaKU4qxdli9moQKBgC/r5ePEIyeY1rNLPTisIivk4tX5DExgpBwzCUsXOExORbj6AJSNWDVwtIw/IJgs+7ypTcxwqez2Wc6TOef545Rm0HmGCHW62CzdnFISUT5FeW7n88Tz6F5FW2291Tm2LJirjd53Y4DxxnKhGeRdBs4iqvZXGw8tfKhNuE5geUwBAoGAH3/HzK6vE0LCyuHpEDOMpCfwtpig5MDHRj7PSJ2va+OBwBynEa7GS/dWCXLrxpdwV6Xc4P3yyiG23PQmHHf0WBkay5wQ51nUNUMOJxsYy2bIxo7kqFQZvdQqF9dAiuvhROysu0I4lX+zLCGAgppH8ftXmPs5djmPnx2gATtAjCo='])
-   //         }
-  //      }
+        stage ('connecting to EC2 instance') {
+            steps {
+                withAWS(region: 'eu-central-1', credentials: 'AWS') {
+                sh 'aws s3 sync s3://jenkins-project1 /home/ec2-user'
+                }
+        }
 
    //     stage ('clone s3 bucket into EC2 instance') {
     //        steps {
