@@ -40,7 +40,7 @@ pipeline {
             steps {
                 sh 'echo connecting to EC2 instance'
                 sshagent(['AWS']) {
-                    sh 'ssh -i /home/eitan/DevopsCourse1.pem ec2-user@ec2-3-75-141-145.eu-central-1.compute.amazonaws.com'
+                    sh 'ssh -i "DevopsCourse1.pem" ec2-user@ec2-3-75-141-145.eu-central-1.compute.amazonaws.com'
                     sh 'echo connected'
                 }
             }
