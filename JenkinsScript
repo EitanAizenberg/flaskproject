@@ -1,84 +1,67 @@
 pipeline {
     agent any
     triggers {
-        pollSCM('*/1 * * * *') //makes it build every minute
+        pollSCM('*/1 * * * *') // Makes it build every minute
     }
 
     stages {
         stage('Cleanup') {
             steps {
-                sh 'echo Cleaning up!'
-                cleanWs() //cleans up the last run of the script because it cannot clone a git repository twice
+                echo 'Cleaning up!'
+                cleanWs() // Cleans up the last run of the script because it cannot clone a git repository twice
             }
         }
 
         stage('Clone Repository') {
             steps {
-                sh 'echo cloning repository'
-                sh 'git clone https://github.com/EitanAizenberg/flaskproject.git'
+                echo 'Cloning repository'
+                git 'https://github.com/EitanAizenberg/flaskproject.git'
             }
         }
 
         stage('Build & Zip') {
             steps {
-                sh 'echo zipping it'
-                sh 'tar -cvzf Crypto-Site.tar.gz flaskproject' //zips the repository's content
+                echo 'Zipping it'
+                sh 'tar -cvzf Crypto-Site.tar.gz flaskproject' // Zips the repository's content
             }
         }
 
         stage('Upload to S3') {
             steps {
-                sh 'echo uploading to S3'
+                echo 'Uploading to S3'
                 withAWS(region: 'eu-central-1', credentials: 'AWS') {
-                    sh 'aws s3 cp Crypto-Site.tar.gz s3://jenkins-project1/' //allows it to access the AWS account and copies the zip file to the s3 bucket
-                    sh 'aws s3 ls jenkins-project1'
+                    sh 'aws s3 cp Crypto-Site.tar.gz s3://jenkins-project1/' // Allows it to access the AWS account and copies the zip file to the S3 bucket
+                    sh 'aws s3 ls s3://jenkins-project1' // Lists the contents of the S3 bucket for verification
                 }
             }
         }
 
-        stage('Test') {
+        stage('Deploy to EC2') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'Project-SSH', keyFileVariable: 'KEY_FILE')]) {
-                    withCredentials([
-                        [
-                            $class: 'AmazonWebServicesCredentialsBinding',
-                            credentialsId: 'AWS',
-                            accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                        ]
-                    ]) {
-                        sshagent(['SSH_ec2']) {
-                            sh """
-                                scp -i \${KEY_FILE} -o StrictHostKeyChecking=no Crypto-Site.tar.gz ec2-user@\${3.75.141.145}:/home/ec2-user/
-                                ssh-keyscan \${3.75.141.145} >> /var/lib/jenkins/.ssh/known_hosts
-                                ssh -o StrictHostKeyChecking=no -i \${KEY_FILE} ec2-user@\${TEST_IP} '
-                                    tar -xzf Crypto-Site.tar.gz
-                                    rm -fr Crypto-Site.tar.gz
-                                    ls
-                                    bash /home/ec2-user/sample-flask-/flaskrun.sh > /dev/null 2>&1 & disown
-                                '
-                        }
+                echo 'Deploying to EC2'
+                withCredentials([sshUserPrivateKey(credentialsId: 'SSH', keyFileVariable: 'KEY_FILE')]) {
+                    sshagent(['SSH_ec2']) {
+                        sh """
+                            ssh -i \${KEY_FILE} -o StrictHostKeyChecking=no ec2-user@3.75.141.145 '
+                                curl -o Crypto-Site.tar.gz https://jenkins-project1.s3.eu-central-1.amazonaws.com/Crypto-Site.tar.gz
+                                tar -xzf Crypto-Site.tar.gz
+                                rm -fr Crypto-Site.tar.gz
+                                cd flaskproject
+                                python app.py > /dev/null 2>&1 & disown
+                            '
+                        """
+                    }
                 }
+            }
         }
 
-
-        stage ('connecting to EC2 instance') {
+        stage('Verify Deployment') {
             steps {
-                sh 'echo connecting to EC2 instance'
-                sshagent(['SSH']) {
-                        sh 'ssh ec2-user@ec2-3-75-141-145.eu-central-1.compute.amazonaws.com ls'
-                        sh 'echo connected'
+                echo 'Verifying deployment'
+                sshagent(['SSH_ec2']) {
+                    sh 'ssh -i \${KEY_FILE} -o StrictHostKeyChecking=no ec2-user@3.75.141.145 "ps -ef | grep python"'
                 }
             }
         }
     }
-}
-
-
-   //     stage ('clone s3 bucket into EC2 instance') {
-    //        steps {
-    //            sh 'echo cloning s3 bucket into an ec2 instance'
-    //            sh 'aws s3 sync https://s3.console.aws.amazon.com/s3/buckets/jenkins-project1?region=eu-central-1&tab=objects https://eu-central-1.console.aws.amazon.com/ec2-instance-connect/ssh?connType=standard&instanceId=i-0d0f9dade003c4abf&osUser=ec2-user&region=eu-central-1&sshPort=22#/ /home/ec2-user/'
-    //        }
-     //   }
 }
