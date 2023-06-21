@@ -38,10 +38,13 @@ pipeline {
 
         stage ('connecting to EC2 instance') {
             steps {
-                withAWS(region: 'eu-central-1', credentials: 'AWS') {
-                sh 'aws s3 sync s3://jenkins-project1 /home/ec2-user'
+                sh 'echo connecting to EC2 instance'
+                sshagent(['AWS']) {
+                    sh 'ssh -i /home/eitan/DevopsCourse1.pem ec2-user@ec2-3-75-141-145.eu-central-1.compute.amazonaws.com'
                 }
+            }
         }
+    }
 
    //     stage ('clone s3 bucket into EC2 instance') {
     //        steps {
