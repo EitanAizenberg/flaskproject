@@ -53,6 +53,4 @@ pipeline {
     //            sh 'aws s3 sync https://s3.console.aws.amazon.com/s3/buckets/jenkins-project1?region=eu-central-1&tab=objects https://eu-central-1.console.aws.amazon.com/ec2-instance-connect/ssh?connType=standard&instanceId=i-0d0f9dade003c4abf&osUser=ec2-user&region=eu-central-1&sshPort=22#/ /home/ec2-user/'
     //        }
      //   }
-        }
-    }
 }
