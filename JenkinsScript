@@ -36,6 +36,28 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'Project-SSH', keyFileVariable: 'KEY_FILE')]) {
+                    withCredentials([
+                        [
+                            $class: 'AmazonWebServicesCredentialsBinding',
+                            credentialsId: 'AWS',
+                            accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                        ]
+                    ]) {
+                        sshagent(['SSH_ec2']) {
+                            sh """
+                                scp -i \${KEY_FILE} -o StrictHostKeyChecking=no Crypto-Site.tar.gz ec2-user@\${3.75.141.145}:/home/ec2-user/
+                                ssh-keyscan \${3.75.141.145} >> /var/lib/jenkins/.ssh/known_hosts
+                                ssh -o StrictHostKeyChecking=no -i \${KEY_FILE} ec2-user@\${TEST_IP} '
+                                    tar -xzf Crypto-Site.tar.gz
+                                    rm -fr Crypto-Site.tar.gz
+                                    ls
+                                    bash /home/ec2-user/sample-flask-/flaskrun.sh > /dev/null 2>&1 & disown
+                                '
+
         stage ('connecting to EC2 instance') {
             steps {
                 sh 'echo connecting to EC2 instance'
