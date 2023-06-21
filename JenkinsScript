@@ -60,9 +60,8 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
-                echo 'Verifying deployment'
-                sshagent(['SSH_ec2']) {
-                    sh 'ssh -i \${KEY_FILE} -o StrictHostKeyChecking=no ec2-user@3.75.141.145 "ps -ef | grep python"'
+                sshagent(['SSH_CREDENTIALS_ID']) {
+                    sh 'ssh -o StrictHostKeyChecking=no ec2-user@3.75.141.145 ps -ef | grep python'
                 }
             }
         }
