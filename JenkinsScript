@@ -49,7 +49,7 @@ pipeline {
                                 tar -xzf Crypto-Site.tar.gz
                                 rm -fr Crypto-Site.tar.gz
                                 cd flaskproject
-                                flask run --host 0.0.0.0
+                                flask run --host 0.0.0.0 &
                             '
                         """
                     }
