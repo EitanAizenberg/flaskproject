@@ -61,7 +61,8 @@ pipeline {
             steps {
                 sshagent(['SSH_ec2']) {
                     sh 'ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.59.27.179 ps -ef | grep python' //shows if the process is in fact running
-                }ps -ef | grep python
+                ps -ef | grep python
+                }
             }
         }
     }
