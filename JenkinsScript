@@ -11,6 +11,7 @@ pipeline {
                 cleanWs() // Cleans up the last run of the script because it cannot clone a git repository twice
             }
         }
+    }
 
         stage('Clone Repository') {
             steps {
@@ -42,7 +43,7 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 echo 'Deploying to EC2'
-                withCredentials([sshUserPrivateKey(credentialsId: 'SSH')]) //, keyFileVariable: 'KEY_FILE')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'SSH')]) { //, keyFileVariable: 'KEY_FILE'
                     sshagent(['SSH_ec2']) {
                         sh """
                             ssh -i /home/eitan/DevOpsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.59.245.149 '//\${KEY_FILE} 
@@ -66,4 +67,3 @@ pipeline {
             }
         }
     }
-}
