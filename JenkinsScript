@@ -45,11 +45,11 @@ pipeline {
                     sshagent(['SSH_ec2']) {
                         sh """
                             ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.59.27.179 '
-                                curl -o Crypto-Site.tar.gz https://jenkins-project1.s3.eu-central-1.amazonaws.com/Crypto-Site.tar.gz
-                                tar -xzf Crypto-Site.tar.gz
-                                rm -fr Crypto-Site.tar.gz
+                                curl -o Crypto-Site.tar.gz https://jenkins-project1.s3.eu-central-1.amazonaws.com/Crypto-Site.tar.gz //copies the Crypto-Site.tar.gz file to the ec2 instance
+                                tar -xzf Crypto-Site.tar.gz //unzips the gz file
+                                rm -fr Crypto-Site.tar.gz //removes the gz file after the unzipping of it
                                 cd flaskproject
-                                flask run --host 0.0.0.0 &
+                                flask run --host 0.0.0.0 & //runs the flask project and the & runs it in the background
                             '
                         """
                     }
@@ -60,8 +60,8 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sshagent(['SSH_ec2']) {
-                    sh 'ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.59.27.179 ps -ef | grep python'
-                }
+                    sh 'ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.59.27.179 ps -ef | grep python' //shows if the process is in fact running
+                }ps -ef | grep python
             }
         }
     }
