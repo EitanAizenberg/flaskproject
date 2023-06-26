@@ -45,7 +45,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'SSH', keyFileVariable: 'KEY_FILE')]) {
                     sshagent(['SSH_ec2']) {
                         sh """
-                            ssh -i \${KEY_FILE} -o StrictHostKeyChecking=no ec2-user@3.75.141.145 '
+                            ssh -i \${KEY_FILE} -o StrictHostKeyChecking=no ec2-user@52.59.27.179 '
                                 curl -o Crypto-Site.tar.gz https://jenkins-project1.s3.eu-central-1.amazonaws.com/Crypto-Site.tar.gz
                                 tar -xzf Crypto-Site.tar.gz
                                 rm -fr Crypto-Site.tar.gz
@@ -61,7 +61,7 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sshagent(['SSH_ec2']) {
-                    sh 'ssh -o StrictHostKeyChecking=no ec2-user@3.75.141.145 ps -ef | grep python'
+                    sh 'ssh -o StrictHostKeyChecking=no ec2-user@52.59.27.179 ps -ef | grep python'
                 }
             }
         }
