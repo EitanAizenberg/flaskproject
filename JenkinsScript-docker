@@ -46,7 +46,7 @@ pipeline {
         stage('Deploy Docker Container') {
             steps {
                 echo 'Deploying Docker container'
-                withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
+                docker.withRegistry('https://hub.docker.com/r/eitanaizenberg/flaskproject', 'Docker') {
                     sh '''
                         docker stop flaskproject-container || true
                         docker rm flaskproject-container || true
