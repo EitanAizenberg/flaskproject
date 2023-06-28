@@ -50,7 +50,7 @@ pipeline {
                     sh '''
                         docker stop flaskproject-container || true
                         docker rm flaskproject-container || true
-                        docker pull }eitanaizenberg/flaskproject:latest
+                        docker pull }/flaskproject:latest
                         docker run -d --name myflaskapp-container -p 8080:8080 eitanaizenberg/flaskproject:latest
                     '''
                 }
