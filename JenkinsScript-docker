@@ -31,11 +31,11 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 echo 'Pushing Docker image to Docker Hub'
-                withCredentials([string(credentialsId: 'DOCKER_HUB_CREDS', variable: 'DOCKER_HUB_CREDS')]) {
+                withCredentials([string(credentialsId: 'Dockerhub', variable: 'Dockerhub')]) {
                     sh '''
-                        docker login -u <your_dockerhub_username> -p $DOCKER_HUB_CREDS
-                        docker tag myflaskapp:latest <your_dockerhub_username>/myflaskapp:latest
-                        docker push <your_dockerhub_username>/myflaskapp:latest
+                        docker login -u eitanaizenberg -p $Dockerhub
+                        docker tag myflaskapp:latest eitanaizenberg/flaskproject:latest
+                        docker push eitanaizenberg/flaskproject:latest
                     '''
                 }
             }
@@ -44,12 +44,12 @@ pipeline {
         stage('Deploy Docker Container') {
             steps {
                 echo 'Deploying Docker container'
-                withCredentials([string(credentialsId: 'DOCKER_HUB_CREDS', variable: 'DOCKER_HUB_CREDS')]) {
+                withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
                     sh '''
-                        docker stop myflaskapp-container || true
-                        docker rm myflaskapp-container || true
-                        docker pull <your_dockerhub_username>/myflaskapp:latest
-                        docker run -d --name myflaskapp-container -p 8080:8080 <your_dockerhub_username>/myflaskapp:latest
+                        docker stop flaskproject-container || true
+                        docker rm flaskproject-container || true
+                        docker pull eitanaizenberg/flaskproject:latest
+                        docker run -d --name myflaskapp-container -p 8080:8080 eitanaizenberg/flaskproject:latest
                     '''
                 }
             }
