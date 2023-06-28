@@ -30,10 +30,10 @@ pipeline {
         
         stage('Push Docker Image to Docker Hub') {
             steps {
-                echo 'Pushing Docker image to Docker Hub'
-                withCredentials([string(credentialsId: 'Dockerhub', variable: 'Dockerhub')]) {
+                echo 'Pushing  image to  Hub'
+                withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
                     sh '''
-                        docker login -u eitanaizenberg -p $Dockerhub
+                         login -u eitanaizenberg -p $docker
                         docker tag myflaskapp:latest eitanaizenberg/flaskproject:latest
                         docker push eitanaizenberg/flaskproject:latest
                     '''
