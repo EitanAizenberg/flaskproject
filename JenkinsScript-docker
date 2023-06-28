@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+    triggers {
+        pollSCM('*/1 * * * *') // Makes it build every minute
+    }
+    
+    stages {
+        stage('Cleanup') {
+            steps {
+                echo 'Cleaning up!'
+                cleanWs() // Cleans up the last run of the script because it cannot clone a git repository twice
+            }
+        }
+        
+        stage('Clone Repository') {
+            steps {
+                echo 'Cloning repository'
+                withEnv(['GIT_TRACE=true']) {
+                    sh 'git clone https://github.com/EitanAizenberg/flaskproject.git'
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image'
+                sh 'docker build -t flaskproject:latest flaskproject'
+            }
+        }
+        
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                echo 'Pushing Docker image to Docker Hub'
+                withCredentials([string(credentialsId: 'DOCKER_HUB_CREDS', variable: 'DOCKER_HUB_CREDS')]) {
+                    sh '''
+                        docker login -u <your_dockerhub_username> -p $DOCKER_HUB_CREDS
+                        docker tag myflaskapp:latest <your_dockerhub_username>/myflaskapp:latest
+                        docker push <your_dockerhub_username>/myflaskapp:latest
+                    '''
+                }
+            }
+        }
+        
+        stage('Deploy Docker Container') {
+            steps {
+                echo 'Deploying Docker container'
+                withCredentials([string(credentialsId: 'DOCKER_HUB_CREDS', variable: 'DOCKER_HUB_CREDS')]) {
+                    sh '''
+                        docker stop myflaskapp-container || true
+                        docker rm myflaskapp-container || true
+                        docker pull <your_dockerhub_username>/myflaskapp:latest
+                        docker run -d --name myflaskapp-container -p 8080:8080 <your_dockerhub_username>/myflaskapp:latest
+                    '''
+                }
+            }
+        }
+        
+        stage('Verify Deployment') {
+            steps {
+                sh 'docker ps'
+            }
+        }
+    }
+}
