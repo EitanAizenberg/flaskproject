@@ -3,7 +3,11 @@ pipeline {
     triggers {
         pollSCM('*/1 * * * *') // Makes it build every minute
     }
-    
+
+    environment {
+        Docker = credentials('Docker')
+    }
+
     stages {
         stage('Cleanup') {
             steps {
@@ -24,20 +28,17 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image'
-                docker.build('eitanaizenberg/flaskproject:latest', '.') //sh 'docker build -t flaskproject:latest flaskproject'
+                withCredentials([string(credentialsId: 'Docker_ID', variable: 'Docker')]) {
+                    sh 'docker build -t eitanaizenberg/flaskproject:latest .'
             }
         }
         
         stage('Push Docker Image to Docker Hub') {
             steps {
                 echo 'Pushing  image to  Hub'
-                withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
-                    docker.image('eitanaizenberg/flaskproject:latest').push()
-                    //sh '''
-                    //     login -u eitanaizenberg -p $docker
-                    //    docker tag myflaskapp:latest eitanaizenberg/flaskproject:latest
-                    //    docker push eitanaizenberg/flaskproject:latest
-                    //'''
+                withCredentials([string(credentialsId: 'Docker_ID', variable: 'Docker')]) {
+                    sh 'docker login -u "$Docker_USR" -p "$Docker_PSW"'
+                    sh 'docker push eitanaizenberg/flaskproject:latest'
                 }
             }
         }
