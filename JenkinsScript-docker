@@ -28,7 +28,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image'
-                withCredentials([string(credentialsId: 'Docker_ID', variable: 'Docker')]) {
+                withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
                     sh 'docker build -t eitanaizenberg/flaskproject:latest .'
                 }
             }
@@ -37,7 +37,7 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 echo 'Pushing  image to  Hub'
-                withCredentials([string(credentialsId: 'Docker_ID', variable: 'Docker')]) {
+                withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
                     sh 'docker login -u "$Docker_USR" -p "$Docker_PSW"'
                     sh 'docker push eitanaizenberg/flaskproject:latest'
                 }
