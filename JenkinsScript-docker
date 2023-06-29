@@ -24,7 +24,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image'
-                sh 'docker build -t flaskproject:latest flaskproject'
+                docker.build('eitanaizenberg/flaskproject:latest', '.') //sh 'docker build -t flaskproject:latest flaskproject'
             }
         }
         
@@ -32,11 +32,12 @@ pipeline {
             steps {
                 echo 'Pushing  image to  Hub'
                 withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
-                    sh '''
-                         login -u eitanaizenberg -p $docker
-                        docker tag myflaskapp:latest eitanaizenberg/flaskproject:latest
-                        docker push eitanaizenberg/flaskproject:latest
-                    '''
+                    docker.image('eitanaizenberg/flaskproject:latest').push()
+                    //sh '''
+                    //     login -u eitanaizenberg -p $docker
+                    //    docker tag myflaskapp:latest eitanaizenberg/flaskproject:latest
+                    //    docker push eitanaizenberg/flaskproject:latest
+                    //'''
                 }
             }
         }
