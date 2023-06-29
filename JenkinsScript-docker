@@ -24,20 +24,18 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker image'
-                docker.withRegistry('https://hub.docker.com/r/eitanaizenberg/flaskproject', 'Docker') {
-                    // Replace 'https://registry.example.com' with your Docker registry URL
-                    // Replace 'docker-credentials' with the ID of your Docker credentials
-                    docker.build('flaskproject:latest', '.')
+                sh 'docker build -t flaskproject:latest flaskproject'
             }
         }
         
         stage('Push Docker Image to Docker Hub') {
             steps {
-                echo 'Pushing Docker image'
-                docker.withRegistry('https://hub.docker.com/r/eitanaizenberg/flaskproject', 'Docker') {
-                    // Replace 'https://registry.example.com' with your Docker registry URL
-                    // Replace 'docker-credentials' with the ID of your Docker credentials
-                    docker.image('flaskproject:latest').push()
+                echo 'Pushing  image to  Hub'
+                withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
+                    sh '''
+                         login -u eitanaizenberg -p $docker
+                        docker tag myflaskapp:latest eitanaizenberg/flaskproject:latest
+                        docker push eitanaizenberg/flaskproject:latest
                     '''
                 }
             }
