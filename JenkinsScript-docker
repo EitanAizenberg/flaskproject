@@ -46,11 +46,11 @@ pipeline {
         stage('Deploy Docker Container') {
             steps {
                 echo 'Deploying Docker container'
-                docker.withRegistry('https://hub.docker.com/r/eitanaizenberg/flaskproject', 'Docker') {
+                withCredentials([string(credentialsId: 'Docker', variable: 'Docker')]) {
                     sh '''
                         docker stop flaskproject-container || true
                         docker rm flaskproject-container || true
-                        docker pull }/flaskproject:latest
+                        docker pull eitanaizenberg/flaskproject:latest
                         docker run -d --name myflaskapp-container -p 8080:8080 eitanaizenberg/flaskproject:latest
                     '''
                 }
