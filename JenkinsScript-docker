@@ -30,6 +30,7 @@ pipeline {
                 echo 'Building Docker image'
                 withCredentials([string(credentialsId: 'Docker_ID', variable: 'Docker')]) {
                     sh 'docker build -t eitanaizenberg/flaskproject:latest .'
+                }
             }
         }
         
