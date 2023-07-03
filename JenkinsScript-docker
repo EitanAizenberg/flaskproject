@@ -50,9 +50,7 @@ pipeline {
             steps {
                 echo 'Deploying Docker container'
                 withCredentials([usernamePassword(credentialsId: 'Docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh {
-                        docker compose up
-                    }
+                    sh 'docker compose up'
                 }
             }
         }
