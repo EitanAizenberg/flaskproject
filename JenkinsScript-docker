@@ -31,7 +31,7 @@ pipeline {
                 echo 'Building Docker image'
                 withCredentials([usernamePassword(credentialsId: 'Docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                 // Your code here that requires the username and password credentials
-                sh 'docker build -t eitanaizenberg/flaskproject:latest .'
+                sh 'docker build -t eitanaizenberg/flaskproject:latest ./flaskproject'
                 }
             }
         }
