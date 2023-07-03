@@ -49,7 +49,7 @@ pipeline {
         stage('Deploy Docker Container') {
             steps {
                 echo 'Deploying Docker container'
-                step([$class: 'DockerComposeBuilder', dockerComposeFile: './flaskproject/docker-compose.yml', option: [$class: 'StartService', scale: 1, service: 'web:redis'], useCustomDockerComposeFile: true])
+                step([$class: 'DockerComposeBuilder', dockerComposeFile: 'flaskproject/docker-compose.yml', option: [$class: 'StartService', scale: 1, service: 'web:redis'], useCustomDockerComposeFile: true])
                 }
             }
         
