@@ -49,8 +49,7 @@ pipeline {
         stage('Deploy Docker Container') {
             steps {
                 echo 'Deploying Docker container'
-                withCredentials([usernamePassword(credentialsId: 'Docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh 'docker compose up'
+                step([$class: 'DockerComposeBuilder', dockerComposeFile: 'docker-compose.yml', option: [$class: 'StartService', scale: 1, service: 'web:redis'], useCustomDockerComposeFile: true])
                 }
             }
         }
