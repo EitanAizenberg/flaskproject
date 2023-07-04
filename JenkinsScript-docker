@@ -49,7 +49,7 @@ pipeline {
             steps {
                 echo 'Deploying to EC2'
                 withCredentials([sshUserPrivateKey(credentialsId: 'SSH', keyFileVariable: 'KEY_FILE')]) {
-                    sshagent(['SSH']) {
+                    sshagent(['SSH_ec2']) {
                         sh """
                             ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.247.46 '
                                 docker run -d eitanaizenberg/flaskproject:latest
@@ -62,7 +62,7 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
-                sshagent(['SSH']) {
+                sshagent(['SSH_ec2']) {
                     sh 'ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.247.46 ps -ef | grep python'
                 }
             }
