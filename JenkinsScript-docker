@@ -52,7 +52,7 @@ pipeline {
                     sshagent(['SSH_ec2']) {
                         sh """
                             ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.247.46 '
-                                step([$class: 'DockerComposeBuilder', dockerComposeFile: './flaskproject/docker-compose.yml', option: [$class: 'StartService', scale: 1, service: 'web:redis'], useCustomDockerComposeFile: true])
+                                docker-compose -f docker-compose.yaml up -d
                             '
                         """
                     }
