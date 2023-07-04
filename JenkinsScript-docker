@@ -52,7 +52,7 @@ pipeline {
                     sshagent(['SSH_ec2']) {
                         sh """
                             ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.247.46 '
-                                docker run -d eitanaizenberg/flaskproject:latest
+                                docker run -d -p 5000:5000 eitanaizenberg/flaskproject:latest
                             '
                         """
                     }
