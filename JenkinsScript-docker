@@ -52,7 +52,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'SSH', keyFileVariable: 'KEY_FILE')]) {
                     sshagent(['SSH_ec2']) {
                         sh """
-                            ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.59.27.179 '
+                            ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.247.46 '
                                 docker run eitanaizenberg/flaskproject:latest
                             '
                         """
@@ -64,7 +64,7 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sshagent(['SSH_ec2']) {
-                    sh 'ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.59.27.179 ps -ef | grep python'
+                    sh 'ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.247.46 ps -ef | grep python'
                 }
             }
         }
