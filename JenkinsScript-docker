@@ -40,7 +40,7 @@ pipeline {
             steps {
                 echo 'Pushing  image to  Hub'
                 withCredentials([usernamePassword(credentialsId: 'Docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+                    sh 'docker login -u "$Docker_USR" -p "$Docker_PSW"'
                     sh 'docker push eitanaizenberg/flaskproject:latest'
                 }
             }
@@ -49,9 +49,16 @@ pipeline {
         stage('Deploy Docker Container') {
             steps {
                 echo 'Deploying Docker container'
-                step([$class: 'DockerComposeBuilder', dockerComposeFile: 'flaskproject/docker-compose.yml', option: [$class: 'StartService', scale: 1, service: 'web:redis'], useCustomDockerComposeFile: true])
+                withCredentials([usernamePassword(credentialsId: 'Docker', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    sh '''
+                        docker stop flaskproject-container || true
+                        docker rm flaskproject-container || true
+                        docker pull eitanaizenberg/flaskproject:latest
+                        docker run -d --name myflaskapp-container -p 5000:5000 eitanaizenberg/flaskproject:latest
+                    '''
                 }
             }
+        }
         
         stage('Verify Deployment') {
             steps {
