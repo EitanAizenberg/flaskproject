@@ -52,7 +52,7 @@ pipeline {
                     sshagent(['SSH_ec2']) {
                         sh """
                             ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.247.46 '
-                                docker-compose -f docker-compose.yaml up -d
+                                docker-compose up -d
                             '
                         """
                     }
