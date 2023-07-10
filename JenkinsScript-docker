@@ -52,6 +52,7 @@ pipeline {
                     sshagent(['SSH_ec2']) {
                         sh """
                             ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@18.196.128.68 '
+                                docker pull eitanaizenberg/flaskproject:latest
                                 docker-compose -f /var/lib/jenkins/workspace/first-pipeline-docker/flaskproject/docker-compose.yaml up -d
                             '
                         """
