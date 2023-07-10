@@ -53,7 +53,7 @@ pipeline {
                         sh """
                             ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@18.196.128.68 '
                                 docker pull eitanaizenberg/flaskproject:latest
-                                docker-compose -f /var/lib/jenkins/workspace/first-pipeline-docker/flaskproject/docker-compose.yaml up -d
+                                docker-compose -f /home/ec2-user/flaskproject/docker-compose.yaml up -d
                             '
                         """
                     }
