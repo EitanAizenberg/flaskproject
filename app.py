@@ -3,11 +3,16 @@ import requests
 
 
 app = Flask(__name__)
+r = redis.Redis(host='redis', port=6379)  # Connect to Redis
 
 
 @app.route("/")
 def home_page():
     return render_template("HomePage.html")
+    r.incr("website_visits")  # Increment the visit count in Redis
+    visits = r.get("website_visits").decode("utf-8")  # Get the current visit count from Redis
+    return render_template("HomePage.html", visits=visits)
+
 
 @app.route("/eth")
 def eth():
