@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app.py
+  name: flaskproject
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: app.py
+      app: flaskproject
   template:
     metadata:
       labels:
-        app: app.py
+        app: flaskproject
     spec:
       containers:
-      - name: app.py
-        image: eitanaizenberg/flaskproject:latest
+      - name: flaskproject
+        image: flaskproject:latest
         ports:
         - containerPort: 5000
