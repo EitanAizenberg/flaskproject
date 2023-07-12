@@ -54,4 +54,4 @@ def btc():
         bitcoin_price = bitcoin_price.decode()  # Convert bytes to string
  
     # Pass the Bitcoin price data to the template
-    return render_template("btc.html", bitcoin_price
+    return render_template("btc.html", bitcoin_price)
