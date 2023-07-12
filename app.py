@@ -1,6 +1,6 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template
 import requests
-
+import redis
 
 app = Flask(__name__)
 r = redis.Redis(host='redis', port=6379)  # Connect to Redis
@@ -8,7 +8,6 @@ r = redis.Redis(host='redis', port=6379)  # Connect to Redis
 
 @app.route("/")
 def home_page():
-    return render_template("HomePage.html")
     r.incr("website_visits")  # Increment the visit count in Redis
     visits = r.get("website_visits").decode("utf-8")  # Get the current visit count from Redis
     return render_template("HomePage.html", visits=visits)
@@ -23,8 +22,9 @@ def eth():
     if eth_response.status_code == 200:
         eth_price = eth_response.json()["coin"]["price"]
     
-    # Pass the Bitcoin price data to the template
+    # Pass the Ethereum price data to the template
     return render_template("eth.html", eth_price=eth_price)
+
 
 @app.route("/btc")
 def btc():
