@@ -51,7 +51,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'SSH', keyFileVariable: 'KEY_FILE')]) {
                     sshagent(['SSH_ec2']) {
                         sh """
-                            ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.234.210 '
+                            ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.57.252.121 '
                                 git clone https://github.com/EitanAizenberg/flaskproject.git
                                 docker-compose -f /home/ec2-user/flaskproject/docker-compose.yaml up -d
                             '
@@ -64,7 +64,7 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sshagent(['SSH_ec2']) {
-                    sh 'ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@3.127.234.210 ps -ef | grep python'
+                    sh 'ssh -i /var/lib/jenkins/DevopsCourse1.pem -o StrictHostKeyChecking=no ec2-user@52.57.252.121 ps -ef | grep python'
                 }
             }
         }
