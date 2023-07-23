@@ -15,12 +15,6 @@ spec:
       containers:
       - name: flask-app
         image: eitanaizenberg/flaskproject:latest
-        command: ["python", "/code/flaskproject/app.py"]  # Update the command to run the Flask app
         ports:
         - containerPort: 5000
-        volumeMounts:
-        - name: app-volume
-          mountPath: /code/flaskproject  # Mount the repository directory as a volume
-      volumes:
-      - name: app-volume
-        emptyDir: {}  # Create an empty directory as the volume
+
