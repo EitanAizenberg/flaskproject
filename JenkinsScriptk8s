@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo 'Applying...'
                 sh """
-                  cd ./workspace/first-pipeline-k8s/flaskproject
+                  cd /var/lib/jenkins/workspace/first-pipeline-k8s/flaskproject
                   kubectl apply -f deployment.yaml
                   kubectl apply -f service.yaml
                 """
