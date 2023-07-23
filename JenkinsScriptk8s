@@ -21,7 +21,7 @@ pipeline {
             }
         }
 
-        stage(Connecting the the GKE cluster) {
+        stage(Connecting to the GKE cluster) {
             steps {
                 echo 'Connecting...'
                 sh 'gcloud container clusters get-credentials devopscourse --zone me-west1 --project neural-virtue-393306'
