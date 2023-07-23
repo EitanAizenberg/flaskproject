@@ -41,7 +41,7 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
-              sh 'kubectl get nodes'
+              sh 'kubectl get svc'
             }
         }
     }
