@@ -17,35 +17,24 @@ pipeline {
                 echo 'Removing existing repositories!'
                 def releases = ['flaskhelm', 'prometheus', 'grafana']
         
-        parallel (
-            "flaskhelm": {
-                script {
-                    if (sh(script: "helm list -q | grep '^flaskhelm$'", returnStatus: true) == 0) {
-                        sh 'helm uninstall flaskhelm'
+    stage('Remove Helm Repositories') {
+        steps {
+            echo 'Removing existing repositories!'
+        
+            script {
+                def releases = ['flaskhelm', 'prometheus', 'grafana']
+            
+                for (release in releases) {
+                    def releaseExists = sh(script: "helm list -q | grep '^${release}$'", returnStatus: true)
+                    if (releaseExists == 0) {
+                        sh "helm uninstall ${release}"
                     } else {
-                        echo "Helm release 'flaskhelm' is not installed, skipping uninstall."
-                    }
-                }
-            },
-            "prometheus": {
-                script {
-                    if (sh(script: "helm list -q | grep '^prometheus$'", returnStatus: true) == 0) {
-                        sh 'helm uninstall prometheus'
-                    } else {
-                        echo "Helm release 'prometheus' is not installed, skipping uninstall."
-                    }
-                }
-            },
-            "grafana": {
-                script {
-                    if (sh(script: "helm list -q | grep '^grafana$'", returnStatus: true) == 0) {
-                        sh 'helm uninstall grafana'
-                    } else {
-                        echo "Helm release 'grafana' is not installed, skipping uninstall."
+                        echo "Helm release '${release}' is not installed, skipping uninstall."
                     }
                 }
             }
-        )
+        }
+    }
 
         stage('Connecting to the GKE cluster') {
             steps {
