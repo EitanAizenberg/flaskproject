@@ -12,6 +12,17 @@ pipeline {
             }
         }
 
+        stage('Remove Helm Repositories') {
+            steps {
+                echo 'Removing existing repositories!'
+                sh '''
+                    helm uninstall flaskhelm
+                    helm uninstall prometheus
+                    helm uninstall grafana
+                '''
+            }
+        }
+
         stage('Connecting to the GKE cluster') {
             steps {
                 echo 'Connecting...'
