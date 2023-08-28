@@ -9,6 +9,11 @@ pipeline {
             steps {
                 echo 'Cleaning up!'
                 cleanWs() // Cleans up the last run of the script because it cannot clone a git repository twice
+                sh '''
+                  helm install flaskhelm FlaskProject/FlaskProject
+                  helm install prometheus prometheus-community/prometheus
+                  helm install grafana grafana/grafana
+                '''
             }
         }
 
