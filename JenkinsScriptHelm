@@ -12,25 +12,16 @@ pipeline {
             }
         }
 
-        stage('Clone Repository') {
-            steps {
-                echo 'Cloning repository'
-                withEnv(['GIT_TRACE=true']) {
-                    sh 'git clone https://github.com/EitanAizenberg/flaskproject.git'
-                }
-            }
-        }
-
         stage('Connecting to the GKE cluster') {
             steps {
                 echo 'Connecting...'
-                sh 'gcloud container clusters get-credentials flask-app-cluster --location europe-west1'
+                sh 'gcloud container clusters get-credentials flask-app-cluster --location us-central1-c'
             }
         }
 
-        stage('apply deployment and service files') {
+        stage('Install Helm Repositories Into The Cluster') {
             steps {
-                echo 'Applying...'
+                echo 'Installing Repositories...'
                 sh """
                   helm install flaskhelm FlaskProject/FlaskProject
                   helm install prometheus prometheus-community/prometheus
