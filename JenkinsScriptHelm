@@ -15,26 +15,13 @@ pipeline {
         stage('Remove Helm Repositories') {
             steps {
                 echo 'Removing existing repositories!'
-                def releases = ['flaskhelm', 'prometheus', 'grafana']
-        
-    stage('Remove Helm Repositories') {
-        steps {
-            echo 'Removing existing repositories!'
-        
-            script {
-                def releases = ['flaskhelm', 'prometheus', 'grafana']
-            
-                for (release in releases) {
-                    def releaseExists = sh(script: "helm list -q | grep '^${release}$'", returnStatus: true)
-                    if (releaseExists == 0) {
-                        sh "helm uninstall ${release}"
-                    } else {
-                        echo "Helm release '${release}' is not installed, skipping uninstall."
-                    }
-                }
+                sh '''
+                    helm uninstall flaskhelm
+                    helm uninstall prometheus
+                    helm uninstall grafana
+                '''
             }
         }
-    }
 
         stage('Connecting to the GKE cluster') {
             steps {
@@ -52,8 +39,7 @@ pipeline {
                   helm repo add FlaskProject gs://helm-bucket1093
                   helm install flaskhelm FlaskProject/FlaskProject
                   helm install prometheus prometheus-community/prometheus
-                  helm install grafana grafana/grafana
-                  kubectl patch service grafana -p '{"spec": {"type": "LoadBalancer"}}'
+                  helm install grafana grafana/grafana -f /var/lib/jenkins/workspace/values.yaml
                 '''
                 }
             }
