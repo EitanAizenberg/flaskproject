@@ -16,9 +16,33 @@ pipeline {
             steps {
                 echo 'Removing existing repositories!'
                 sh '''
-                    helm uninstall flaskhelm
-                    helm uninstall prometheus
-                    helm uninstall grafana
+                    script {
+                        def flaskhelmExists = sh(script: "helm list -q | grep '^flaskhelm$'", returnStatus: true)
+                        if (flaskhelmExists == 0) {
+                            sh 'helm uninstall flaskhelm'
+                        } else {
+                            echo "Helm release 'flaskhelm' is not installed, skipping uninstall."
+                          }
+                    }
+        
+                    script {
+                        def prometheusExists = sh(script: "helm list -q | grep '^prometheus$'", returnStatus: true)
+                        if (prometheusExists == 0) {
+                            sh 'helm uninstall prometheus'
+                        } else {
+                            echo "Helm release 'prometheus' is not installed, skipping uninstall."
+                          }
+                    }
+        
+                    script {
+                        def grafanaExists = sh(script: "helm list -q | grep '^grafana$'", returnStatus: true)
+                        if (grafanaExists == 0) {
+                            sh 'helm uninstall grafana'
+                        } else {
+                            echo "Helm release 'grafana' is not installed, skipping uninstall."
+                          }
+                        }
+
                 '''
             }
         }
