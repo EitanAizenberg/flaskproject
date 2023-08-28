@@ -9,11 +9,6 @@ pipeline {
             steps {
                 echo 'Cleaning up!'
                 cleanWs() // Cleans up the last run of the script because it cannot clone a git repository twice
-                sh '''
-                  helm install flaskhelm FlaskProject/FlaskProject
-                  helm install prometheus prometheus-community/prometheus
-                  helm install grafana grafana/grafana
-                '''
             }
         }
 
@@ -27,14 +22,14 @@ pipeline {
         stage('Install Helm Repositories Into The Cluster') {
             steps {
                 echo 'Installing Repositories...'
-                sh """
+                sh '''
                   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
                   helm repo add grafana https://grafana.github.io/helm-charts
                   helm repo add FlaskProject gs://helm-bucket1093
                   helm install flaskhelm FlaskProject/FlaskProject
                   helm install prometheus prometheus-community/prometheus
                   helm install grafana grafana/grafana
-                """
+                '''
                 }
             }
 
@@ -45,4 +40,3 @@ pipeline {
         }
     }
 }
-
