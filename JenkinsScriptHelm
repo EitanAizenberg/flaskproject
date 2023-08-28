@@ -39,7 +39,7 @@ pipeline {
                   helm repo add FlaskProject gs://helm-bucket1093
                   helm install flaskhelm FlaskProject/FlaskProject
                   helm install prometheus prometheus-community/prometheus
-                  helm install grafana grafana/grafana -f /home/eitan/Desktop/HelmRepository/FlaskProject/values.yaml
+                  helm install grafana grafana/grafana -f /var/lib/jenkins/workspace/values.yaml
                 '''
                 }
             }
