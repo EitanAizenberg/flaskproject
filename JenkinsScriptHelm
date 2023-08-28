@@ -15,40 +15,22 @@ pipeline {
         stage('Remove Helm Repositories') {
             steps {
                 echo 'Removing existing repositories!'
-                script {
-                    def uninstallSuccess = true
-                    catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                        sh '''
-                            helm uninstall flaskhelm
-                            helm uninstall prometheus
-                            helm uninstall grafana
-                        '''
-                    }
-                    if (currentBuild.resultIsBetterOrEqualTo("SUCCESS")) {
-                        echo "Helm uninstallation succeeded."
-                    } else {
-                        echo "Helm uninstallation failed. Skipping the next steps."
-                        uninstallSuccess = false
-                    }
-                    return uninstallSuccess
-                }
+                sh '''
+                    helm uninstall flaskhelm
+                    helm uninstall prometheus
+                    helm uninstall grafana
+                '''
             }
         }
-        
+
         stage('Connecting to the GKE cluster') {
-            when {
-                expression { return uninstallSuccess }
-            }
             steps {
                 echo 'Connecting...'
                 sh 'gcloud container clusters get-credentials flask-app-cluster --location us-central1-c'
             }
         }
-        
+
         stage('Install Helm Repositories Into The Cluster') {
-            when {
-                expression { return uninstallSuccess }
-            }
             steps {
                 echo 'Installing Repositories...'
                 sh '''
@@ -59,15 +41,12 @@ pipeline {
                   helm install prometheus prometheus-community/prometheus
                   helm install grafana grafana/grafana -f /var/lib/jenkins/workspace/values.yaml
                 '''
+                }
             }
-        }
-        
+
         stage('Verify Deployment') {
-            when {
-                expression { return uninstallSuccess }
-            }
             steps {
-                sh 'kubectl get all'
+              sh 'kubectl get all'
             }
         }
     }
