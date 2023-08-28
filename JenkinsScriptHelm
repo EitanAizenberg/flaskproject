@@ -28,7 +28,7 @@ pipeline {
             steps {
                 echo 'Installing Repositories...'
                 sh """
-                  helm install flaskhelm flaskproject/flaskproject
+                  helm install flaskhelm FlaskProject/FlaskProject
                   helm install prometheus prometheus-community/prometheus
                   helm install grafana grafana/grafana
                 """
