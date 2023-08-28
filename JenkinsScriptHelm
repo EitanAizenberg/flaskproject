@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    triggers {
+        pollSCM('*/1 * * * *') // Makes it build every minute
+    }
+
+    stages {
+        stage('Cleanup') {
+            steps {
+                echo 'Cleaning up!'
+                cleanWs() // Cleans up the last run of the script because it cannot clone a git repository twice
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                echo 'Cloning repository'
+                withEnv(['GIT_TRACE=true']) {
+                    sh 'git clone https://github.com/EitanAizenberg/flaskproject.git'
+                }
+            }
+        }
+
+        stage('Connecting to the GKE cluster') {
+            steps {
+                echo 'Connecting...'
+                sh 'gcloud container clusters get-credentials flask-app-cluster --location europe-west1'
+            }
+        }
+
+        stage('apply deployment and service files') {
+            steps {
+                echo 'Applying...'
+                sh """
+                  helm install flaskhelm FlaskProject/FlaskProject
+                  helm install prometheus prometheus-community/prometheus
+                  helm install grafana grafana/grafana
+                """
+                }
+            }
+
+        stage('Verify Deployment') {
+            steps {
+              sh 'kubectl get all'
+            }
+        }
+    }
+}
+
