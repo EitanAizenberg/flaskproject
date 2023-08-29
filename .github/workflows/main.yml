@@ -22,7 +22,7 @@ jobs:
 
       - name: Install Google Cloud CLI
         run: |
-          apt-get install google-cloud-cli
+          sudo apt-get install google-cloud-cli
 
       - name: Install kubectl
         run: |
