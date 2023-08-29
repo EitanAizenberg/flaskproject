@@ -40,6 +40,7 @@ pipeline {
                   helm install flaskhelm FlaskProject/FlaskProject
                   helm install prometheus prometheus-community/prometheus
                   helm install grafana grafana/grafana -f /var/lib/jenkins/workspace/values.yaml
+                  kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
                 '''
                 }
             }
