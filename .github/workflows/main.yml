@@ -36,12 +36,6 @@ jobs:
         run: |
           gcloud container clusters get-credentials flask-app-cluster --zone us-central1-c
 
-      - name: Remove Helm Repositories
-        run: |
-          helm uninstall flaskhelm
-          helm uninstall prometheus
-          helm uninstall grafana
-
       - name: Install Helm Repositories
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
