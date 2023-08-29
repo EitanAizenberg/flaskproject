@@ -39,15 +39,19 @@ pipeline {
                   helm repo add FlaskProject gs://helm-bucket1093
                   helm install flaskhelm FlaskProject/FlaskProject
                   helm install prometheus prometheus-community/prometheus
-                  helm install grafana grafana/grafana -f /var/lib/jenkins/workspace/values.yaml
-                  kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+                  helm install grafana grafana/grafana
+                  kubectl patch service grafana -p '{"spec": {"type": "LoadBalancer"}}'
+                  kubectl patch service prometheus-server -p '{"spec": {"type": "LoadBalancer"}}'
                 '''
                 }
             }
 
         stage('Verify Deployment') {
             steps {
-              sh 'kubectl get all'
+              sh '''
+                kubectl get all
+                kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+              '''
             }
         }
     }
