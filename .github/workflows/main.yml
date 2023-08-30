@@ -49,6 +49,9 @@ jobs:
         run: |
           if helm list -q | grep -E 'flaskhelm|prometheus|grafana'; then
             echo "Helm releases exist. Proceeding with uninstallation."
+            helm uninstall flaskhelm
+            helm uninstall prometheus
+            helm uninstall grafana
             exit 0
           else
             echo "Helm releases not found. Skipping uninstallation step."
