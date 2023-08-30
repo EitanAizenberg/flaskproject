@@ -20,37 +20,54 @@ jobs:
           service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
           export_default_credentials: true
 
-      - name: Install kubectl
+      - name: Installing Kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
 
-      - name: Install Helm
+      - name: Installing Helm
         run: |
           curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
           chmod +x get_helm.sh
           ./get_helm.sh
 
-      - name: Configure kubectl
+      - name: Configuring Kubectl
         run: |
           gcloud components install kubectl
           gcloud container clusters get-credentials flask-app-cluster --zone us-central1-c
 
-      - name: Install Helm Repositories
+      - name: Adding Helm repositories
         run: |
           helm plugin install https://github.com/hayorov/helm-gcs.git
           helm gcs init gs://helm-bucket1093
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo add FlaskProject gs://helm-bucket1093
+
+      - name: Uninstalling existing Helm charts
+        run: |
+          if helm list -q | grep -E 'flaskhelm|prometheus|grafana'; then
+            echo "Helm releases exist. Proceeding with uninstallation."
+            exit 0
+          else
+            echo "Helm releases not found. Skipping uninstallation step."
+            exit 1
+          fi
+        continue-on-error: true
+          helm uninstall flaskhelm
+          helm uninstall prometheus
+          helm uninstall grafana
+          
+      - name: Installing Helm charts and configuring services
+        run: |
           helm install flaskhelm FlaskProject/FlaskProject
           helm install prometheus prometheus-community/prometheus
           helm install grafana grafana/grafana
           kubectl patch service grafana -p '{"spec": {"type": "LoadBalancer"}}'
           kubectl patch service prometheus-server -p '{"spec": {"type": "LoadBalancer"}}'
 
-      - name: Verify Deployment
+      - name: Verify deployment
         run: |
           kubectl get all
           kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
