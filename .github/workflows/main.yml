@@ -55,10 +55,7 @@ jobs:
             exit 1
           fi
         continue-on-error: true
-          helm uninstall flaskhelm
-          helm uninstall prometheus
-          helm uninstall grafana
-          
+         
       - name: Installing Helm charts and configuring services
         run: |
           helm install flaskhelm FlaskProject/FlaskProject
