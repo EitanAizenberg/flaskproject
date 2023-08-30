@@ -34,7 +34,7 @@ jobs:
 
       - name: Configure kubectl
         run: |
-          gcloud --help
+          gcloud components install kubectl
           gcloud container clusters get-credentials flask-app-cluster --zone us-central1-c
 
       - name: Install Helm Repositories
