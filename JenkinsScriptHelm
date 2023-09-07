@@ -16,6 +16,8 @@ pipeline {
             steps {
                 echo 'Removing existing repositories!'
                 sh '''
+                    if helm list -q | grep -E 'flaskhelm|prometheus|grafana'; then 
+                    echo "Helm releases exist. Proceeding with uninstallation."
                     helm uninstall flaskhelm
                     helm uninstall prometheus
                     helm uninstall grafana
