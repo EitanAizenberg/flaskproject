@@ -12,7 +12,14 @@ pipeline {
             }
         }
 
-        stage('Remove Helm Repositories') {
+        stage('Connecting to the GKE cluster') {
+            steps {
+                echo 'Connecting...'
+                sh 'gcloud container clusters get-credentials flask-app-cluster --location us-central1-c'
+            }
+        }
+
+        stage('Remove Helm Charts') {
             steps {
                 script {
                     def helmList = sh(script: 'helm list -q', returnStatus: true).trim()
@@ -27,13 +34,6 @@ pipeline {
                         echo 'Helm releases not found. Skipping uninstallation step.'
                     }
                 }
-            }
-        }
-
-        stage('Connecting to the GKE cluster') {
-            steps {
-                echo 'Connecting...'
-                sh 'gcloud container clusters get-credentials flask-app-cluster --location us-central1-c'
             }
         }
 
