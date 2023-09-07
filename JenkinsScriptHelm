@@ -21,22 +21,13 @@ pipeline {
 
         stage('Remove Helm Charts') {
             steps {
-                script {
-                    def helmList = sh(script: "helm list -q | grep -E 'flaskhelm|prometheus|grafana'", returnStatus: true).trim()
-                    if (helmList == 0) {
-                        echo 'Helm releases exist. Proceeding with uninstallation.'
-                        sh '''
-                            helm uninstall flaskhelm
-                            helm uninstall prometheus
-                            helm uninstall grafana
-                        '''
-                    } else {
-                        echo 'Helm releases not found. Skipping uninstallation step.'
-                    }
+                sh '''
+                    helm uninstall flaskhelm
+                    helm uninstall prometheus
+                    helm uninstall grafana
+                '''
                 }
             }
-        }
-
 
         stage('Install Helm Repositories Into The Cluster') {
             steps {
