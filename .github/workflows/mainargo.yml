@@ -69,6 +69,7 @@ jobs:
           helm install grafana grafana/grafana
           kubectl patch service grafana -p '{"spec": {"type": "LoadBalancer"}}'
           kubectl patch service prometheus-server -p '{"spec": {"type": "LoadBalancer"}}'
+          kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 
       - name: Verify deployment
         run: |
