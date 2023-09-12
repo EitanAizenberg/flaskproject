@@ -59,6 +59,7 @@ jobs:
 
       - name: Installing ArgoCD and the Flask app
         run: |
+          kubectl delete namespace argocd --ignore-not-found=true
           kubectl create namespace argocd
           kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
           cd /home/runner/work/flaskproject/flaskproject/HelmRepository/FlaskProject
