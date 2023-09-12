@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: default1
+spec:
+  destination:
+    name: ''
+    namespace: argohelm
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ''
+    repoURL: 'https://storage.googleapis.com/helm-bucket1093'
+    targetRevision: 0.1.0
+    chart: FlaskProject
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
