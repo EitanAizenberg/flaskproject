@@ -75,3 +75,4 @@ jobs:
         run: |
           kubectl get all
           kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+          argocd admin initial-password -n argocd
